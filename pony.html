@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
+    <title>دنیای جادویی توآیلایت اسپارکل برای ماهک کوچولو</title>
+    <style>
+        /* --- CORE CONFIGURATION & RESET --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0f1026;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            perspective: 1200px;
+        }
+
+        /* --- RESPONSIVE CINEMATIC STAGE --- */
+        .viewport-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1920px;
+            max-height: 1080px;
+            background: linear-gradient(to bottom, #bbf2f6 0%, #86e3ce 40%, #d6e69f 60%, #4ca456 100%);
+            overflow: hidden;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+        }
+
+        /* --- BACKGROUND SCENERY (PURE CSS ART) --- */
+        .sky-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 55%;
+            background: linear-gradient(to bottom, #ffc8a2 0%, #ff9a9e 30%, #fecfef 70%, #a1c4fd 100%);
+            z-index: 1;
+        }
+
+        /* ابرهای الگوریتمی سه‌بعدی */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 100px;
+            filter: blur(4px);
+            z-index: 2;
+            animation: cloudFloat 20s infinite linear;
+        }
+        .cloud::before, .cloud::after {
+            content: ''; position: absolute; background: rgba(255, 255, 255, 0.9); border-radius: 50%;
+        }
+        .c1 { width: 200px; height: 60px; top: 10%; left: -200px; animation-delay: 0s; transform: scale(0.8); }
+        .c1::before { width: 100px; height: 100px; top: -50px; left: 30px; }
+        .c1::after { width: 80px; height: 80px; top: -40px; left: 90px; }
+
+        .c2 { width: 300px; height: 80px; top: 22%; left: -300px; animation-delay: 7s; transform: scale(0.6); opacity: 0.7; }
+        .c2::before { width: 140px; height: 140px; top: -80px; left: 40px; }
+        .c2::after { width: 110px; height: 110px; top: -60px; left: 140px; }
+
+        @keyframes cloudFloat {
+            0% { left: -10%; }
+            100% { left: 110%; }
+        }
+
+        /* قصر رویایی در دوردست */
+        .castle-container {
+            position: absolute;
+            top: 28%;
+            left: 15%;
+            width: 180px;
+            height: 150px;
+            z-index: 3;
+            transform: scale(0.7);
+            opacity: 0.9;
+            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
+        }
+        .castle-base {
+            position: absolute;
+            bottom: 0; width: 120px; height: 60px;
+            background: #e2d4f0; border-radius: 5px;
+        }
+        .tower {
+            position: absolute; background: #d0bce3; width: 25px; height: 90px; bottom: 0;
+        }
+        .t1 { left: 10px; height: 100px; }
+        .t2 { left: 50px; height: 130px; width: 35px; }
+        .t3 { left: 95px; height: 85px; }
+        .cone {
+            position: absolute; top: -30px; left: 0; width: 0; height: 0;
+            border-left: 12.5px solid transparent; border-right: 12.5px solid transparent;
+            border-bottom: 30px solid #916bb5;
+        }
+        .t2 .cone { border-left-width: 17.5px; border-right-width: 17.5px; top: -40px; border-bottom-width: 40px; }
+
+        /* رودخانه جاری */
+        .river {
+            position: absolute;
+            top: 50%; left: -10%; width: 120%; height: 15%;
+            background: linear-gradient(135deg, #74ebe7 0%, #4ea8de 100%);
+            transform: skewY(-4deg);
+            z-index: 2;
+            box-shadow: inset 0 10px 20px rgba(255,255,255,0.4);
+        }
+
+        /* چمن‌زار و تپه‌های لایه‌بندی شده سه‌بعدی */
+        .meadow-back {
+            position: absolute;
+            bottom: 35%; width: 120%; height: 30%; left: -10%;
+            background: linear-gradient(to bottom, #9be15d 0%, #7ec832 100%);
+            border-radius: 50% 50% 0 0;
+            z-index: 2;
+        }
+        .meadow-front {
+            position: absolute;
+            bottom: 0; width: 140%; height: 48%; left: -20%;
+            background: linear-gradient(to bottom, #6bbb3b 0%, #418e1f 100%);
+            border-radius: 45% 55% 0 0;
+            z-index: 4;
+            transform-style: preserve-3d;
+            box-shadow: inset 0 20px 40px rgba(255,255,255,0.2);
+        }
+
+        /* تک‌تک گل‌های روی چمنزار */
+        .flower-field {
+            position: absolute;
+            width: 100%; height: 100%;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .field-flower {
+            position: absolute;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .f-center { width: 8px; height: 8px; background: #ffdb4d; border-radius: 50%; z-index: 2; }
+        .f-petal {
+            position: absolute; width: 6px; height: 14px; background: #fff; border-radius: 4px;
+        }
+        .f-p1 { transform: rotate(0deg) translateY(-6px); }
+        .f-p2 { transform: rotate(60deg) translateY(-6px); }
+        .f-p3 { transform: rotate(120deg) translateY(-6px); }
+        .f-p4 { transform: rotate(180deg) translateY(-6px); }
+        .f-p5 { transform: rotate(240deg) translateY(-6px); }
+        .f-p6 { transform: rotate(300deg) translateY(-6px); }
+
+        /* موقعیت‌دهی توزیع‌شده گل‌ها برای پرکردن چمنزار */
+        .fl1 { bottom: 25%; left: 10%; transform: scale(0.7); }
+        .fl1 .f-petal { background: #ff94c2; }
+        .fl2 { bottom: 15%; left: 28%; transform: scale(1.1); }
+        .fl3 { bottom: 35%; left: 45%; transform: scale(0.6); }
+        .fl3 .f-petal { background: #bca6ff; }
+        .fl4 { bottom: 12%; left: 60%; transform: scale(1.3); }
+        .fl4 .f-petal { background: #ffd15c; }
+        .fl5 { bottom: 28%; left: 82%; transform: scale(0.8); }
+        .fl5 .f-petal { background: #ff7373; }
+        .fl6 { bottom: 5%; left: 15%; transform: scale(1.4); }
+        .fl7 { bottom: 8%; left: 75%; transform: scale(1.2); }
+        .fl7 .f-petal { background: #7ee3ff; }
+
+        /* --- THE MASTERPIECE: TWILIGHT SPARKLE (PURE CSS ART) --- */
+        .pony-container {
+            position: absolute;
+            bottom: -5%;
+            right: 8%;
+            width: 480px;
+            height: 520px;
+            z-index: 10;
+            transform-style: preserve-3d;
+            transform: scale(0.55) translateZ(0) translateY(120px) translateX(50px);
+            transition: transform 1.6s cubic-bezier(0.25, 1.3, 0.4, 1);
+            will-change: transform;
+            pointer-events: none;
+        }
+
+        /* انیمیشن زنده بودن بالینی و فیزیکی کاراکتر */
+        .pony-skeleton {
+            position: relative;
+            width: 100%; height: 100%;
+            transform-style: preserve-3d;
+            animation: ponyBreath 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes ponyBreath {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-8px) rotate(0.5deg); }
+        }
+
+        /* ساختار فیزیکی پاها */
+        .pony-leg {
+            position: absolute;
+            width: 52px; height: 190px;
+            background: #cb84e6;
+            border-radius: 0 0 22px 22px;
+            bottom: 40px;
+            box-shadow: inset -8px -5px 15px rgba(0,0,0,0.12);
+            transform-origin: top center;
+        }
+        .leg-hoof {
+            position: absolute; bottom: 0; width: 100%; height: 25px;
+            background: #b86fd3; border-radius: 0 0 22px 22px;
+        }
+        /* پرسپکتیو قرارگیری پاها */
+        .l-front-left  { left: 240px; bottom: 30px; z-index: 12; }
+        .l-front-right { left: 295px; bottom: 55px; z-index: 8; filter: brightness(0.85); }
+        .l-back-left   { left: 80px;  bottom: 40px; z-index: 12; }
+        .l-back-right  { left: 130px; bottom: 65px; z-index: 8; filter: brightness(0.85); }
+
+        /* شکم و تنه پونی */
+        .pony-body {
+            position: absolute;
+            left: 90px; top: 190px;
+            width: 210px; height: 145px;
+            background: #cb84e6;
+            border-radius: 90px 85px 85px 90px;
+            z-index: 10;
+            box-shadow: inset -10px -15px 30px rgba(0,0,0,0.15), 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        /* کیوتی مارک (ستاره جادویی توآیلایت روی کفل پونی) */
+        .cutie-mark {
+            position: absolute; right: 35px; top: 40px; width: 50px; height: 50px;
+        }
+        .star-main {
+            position: absolute; width: 0; height: 0;
+            border-left: 20px solid transparent; border-right: 20px solid transparent;
+            border-bottom: 35px solid #fe4bb0; top: 5px; left: 5px;
+        }
+        .star-main::after {
+            content: ''; position: absolute; width: 0; height: 0;
+            border-left: 20px solid transparent; border-right: 20px solid transparent;
+            border-top: 35px solid #fe4bb0; top: 12px; left: -20px;
+        }
+        .star-white {
+            position: absolute; background: #fff; width: 6px; height: 6px; border-radius: 50%;
+            box-shadow: 25px -10px 0 #fff, -15px 25px 0 #fff, 30px 25px 0 #fff;
+        }
+
+        /* گردن کشیده و مغرور */
+        .pony-neck {
+            position: absolute;
+            left: 240px; top: 110px;
+            width: 75px; height: 120px;
+            background: #cb84e6;
+            transform: rotate(-25deg);
+            border-radius: 40px 40px 0 0;
+            z-index: 9;
+            box-shadow: inset -5px 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* سر پاره‌خطی فانتزی */
+        .pony-head {
+            position: absolute;
+            left: 235px; top: 30px;
+            width: 140px; height: 135px;
+            background: #cb84e6;
+            border-radius: 50%;
+            z-index: 11;
+            box-shadow: inset -8px 8px 20px rgba(0,0,0,0.12), 5px 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* پوزه دهان پونی */
+        .pony-muzzle {
+            position: absolute;
+            right: -25px; bottom: 20px;
+            width: 70px; height: 65px;
+            background: #cb84e6;
+            border-radius: 50% 60% 60% 40%;
+            transform: rotate(-10deg);
+            box-shadow: inset -5px -2px 10px rgba(0,0,0,0.1);
+        }
+        .pony-smile {
+            position: absolute; right: 15px; top: 32px;
+            width: 25px; height: 15px;
+            border-bottom: 4px solid #7d4493;
+            border-radius: 0 0 15px 15px;
+            transform: rotate(10deg);
+        }
+
+        /* چشمان درشت انیمیشنی براق */
+        .pony-eye {
+            position: absolute;
+            right: 25px; top: 30px;
+            width: 48px; height: 62px;
+            background: #fff;
+            border-radius: 50% 50% 45% 45%;
+            border: 3px solid #56276b;
+            overflow: hidden;
+            transform: rotate(-5deg);
+        }
+        .eye-iris {
+            position: absolute; right: 2px; top: 6px;
+            width: 34px; height: 48px;
+            background: linear-gradient(to bottom, #2b0b3a 0%, #661f80 60%, #9c3cbcfd 100%);
+            border-radius: 50%;
+        }
+        .eye-pupil {
+            position: absolute; right: 4px; top: 8px;
+            width: 20px; height: 32px;
+            background: #000; border-radius: 50%;
+        }
+        .eye-sparkle-1 {
+            position: absolute; left: 4px; top: 6px;
+            width: 10px; height: 14px; background: #fff; border-radius: 50%;
+        }
+        .eye-sparkle-2 {
+            position: absolute; left: 8px; bottom: 12px;
+            width: 5px; height: 5px; background: #fff; border-radius: 50%;
+        }
+        .eyelashes {
+            position: absolute; top: 20px; right: 15px; width: 60px; height: 20px;
+            z-index: 12;
+        }
+        .lash {
+            position: absolute; background: #56276b; height: 4px; border-radius: 2px; transform-origin: left center;
+        }
+        .lash1 { width: 18px; top: 5px; right: 5px; transform: rotate(-40deg); }
+        .lash2 { width: 15px; top: -2px; right: 18px; transform: rotate(-65deg); }
+
+        /* گوش‌ها */
+        .pony-ear {
+            position: absolute;
+            left: 245px; top: 5px;
+            width: 35px; height: 60px;
+            background: #cb84e6;
+            border-radius: 50% 50% 20% 20%;
+            transform: rotate(-25deg);
+            z-index: 10;
+            box-shadow: inset 6px 4px 10px rgba(0,0,0,0.1);
+        }
+        .ear-inner {
+            position: absolute; left: 7px; top: 10px; width: 18px; height: 40px;
+            background: #dfa3fa; border-radius: 50% 50% 20% 20%;
+        }
+
+        /* یال ابریشمی دورنگ (Mane) */
+        .pony-mane-front {
+            position: absolute;
+            right: -15px; top: -5px;
+            width: 110px; height: 110px;
+            background: #1d1740;
+            border-radius: 0 80px 40px 90px;
+            z-index: 13;
+            overflow: hidden;
+            box-shadow: -5px 8px 15px rgba(0,0,0,0.2);
+        }
+        .mane-stripe-pink {
+            position: absolute; right: 25px; top: -10px; width: 18px; height: 150px;
+            background: #ff4791; transform: rotate(15deg);
+        }
+        .mane-stripe-purple {
+            position: absolute; right: 43px; top: -10px; width: 14px; height: 150px;
+            background: #963cb3; transform: rotate(15deg);
+        }
+
+        .pony-mane-back {
+            position: absolute;
+            left: 190px; top: 90px;
+            width: 90px; height: 180px;
+            background: #1d1740;
+            border-radius: 40px 0 50px 70px;
+            z-index: 7;
+            overflow: hidden;
+        }
+
+        /* شاخ جادویی تک‌شاخ (Horn) */
+        .pony-horn {
+            position: absolute;
+            left: 310px; top: -15px;
+            width: 18px; height: 65px;
+            background: linear-gradient(to top, #cb84e6 0%, #e9b2ff 100%);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            transform: rotate(22deg);
+            z-index: 12;
+        }
+        .horn-glow {
+            position: absolute; left: 295px; top: -35px; width: 50px; height: 50px;
+            background: radial-gradient(circle, rgba(254,168,255,0.8) 0%, rgba(254,168,255,0) 70%);
+            z-index: 14; opacity: 0; transition: opacity 0.5s ease;
+        }
+
+        /* دم بلند و باابهت (Tail) */
+        .pony-tail {
+            position: absolute;
+            left: -35px; top: 160px;
+            width: 140px; height: 210px;
+            background: #1d1740;
+            border-radius: 40px 10px 50px 90px;
+            z-index: 6;
+            transform: rotate(10deg);
+            overflow: hidden;
+            box-shadow: -10px 10px 20px rgba(0,0,0,0.15);
+            transform-origin: top right;
+            animation: tailWag 3s infinite alternate ease-in-out;
+        }
+        @keyframes tailWag {
+            0% { transform: rotate(8deg); }
+            100% { transform: rotate(16deg); }
+        }
+
+        /* گلی که پونی تعارف می‌کند */
+        .gift-flower {
+            position: absolute;
+            left: 350px; top: 220px;
+            z-index: 20;
+            display: flex; justify-content: center; align-items: center;
+            transform: scale(1.6);
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.15));
+            animation: flowerFloat 2s infinite alternate ease-in-out;
+        }
+        @keyframes flowerFloat {
+            0% { transform: scale(1.6) translateY(0) rotate(0); }
+            100% { transform: scale(1.6) translateY(-5px) rotate(5deg); }
+        }
+        .g-stem {
+            position: absolute; width: 6px; height: 70px; background: #55b63a;
+            top: 10px; transform: rotate(-15deg); border-radius: 3px;
+        }
+        .g-center { width: 14px; height: 14px; background: #ffcc00; border-radius: 50%; z-index: 5; }
+        .g-petal { position: absolute; width: 12px; height: 26px; background: #a656db; border-radius: 8px; }
+        .g-p1 { transform: rotate(0deg) translateY(-14px); }
+        .g-p2 { transform: rotate(72deg) translateY(-14px); }
+        .g-p3 { transform: rotate(144deg) translateY(-14px); }
+        .g-p4 { transform: rotate(216deg) translateY(-14px); }
+        .g-p5 { transform: rotate(288deg) translateY(-14px); }
+
+        /* --- UI & SPEECH BUBBLE LAYER --- */
+        .ui-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 100;
+            pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+            padding: 30px;
+        }
+
+        .guide-banner {
+            background: rgba(255, 255, 255, 0.75);
+            border: 2px solid rgba(255,255,255,0.5);
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #7d2a8a;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            animation: bannerPulse 1.8s infinite alternate ease-in-out;
+            transition: opacity 0.5s ease;
+        }
+        @keyframes bannerPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.04); box-shadow: 0 15px 45px rgba(223, 107, 243, 0.3); }
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: 15%;
+            left: 20%;
+            background: linear-gradient(135deg, #ffffff 0%, #fff3fa 100%);
+            border: 5px solid #e16cb4;
+            padding: 25px 45px;
+            border-radius: 40px;
+            box-shadow: 0 25px 55px rgba(154, 42, 111, 0.25);
+            opacity: 0;
+            transform: scale(0) translateZ(100px);
+            transform-origin: bottom center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+        }
+        .speech-bubble::after {
+            content: ''; position: absolute; bottom: -24px; left: 50%;
+            transform: translateX(-50%); width: 0; height: 0;
+            border-width: 24px 24px 0; border-style: solid; border-color: #ffffff transparent;
+        }
+        .speech-bubble::before {
+            content: ''; position: absolute; bottom: -31px; left: 50%;
+            transform: translateX(-50%); width: 0; height: 0;
+            border-width: 26px 26px 0; border-style: solid; border-color: #e16cb4 transparent;
+        }
+
+        .speech-text {
+            font-size: 28px;
+            font-weight: 900;
+            color: #901c62;
+            text-align: center;
+            white-space: nowrap;
+            text-shadow: 1px 1px 0 #fff;
+        }
+        .name-highlight {
+            color: #f7a11b;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* --- HARDWARE ACCELERATED INTERACTION CLASSES --- */
+        .stage.is-active .pony-container {
+            transform: scale(0.95) translateZ(150px) translateY(-30px) translateX(-40px);
+        }
+        .stage.is-active .horn-glow {
+            opacity: 1;
+            animation: magicPulse 1s infinite alternate ease-in-out;
+        }
+        @keyframes magicPulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.3); opacity: 1; }
+        }
+        .stage.is-active .speech-bubble {
+            opacity: 1;
+            transform: scale(1) translateZ(100px);
+        }
+
+        /* --- MOBILE ULTRA-RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 1024px) {
+            .pony-container { transform: scale(0.45) translateY(180px) translateX(80px); }
+            .stage.is-active .pony-container { transform: scale(0.7) translateZ(80px) translateY(40px) translateX(-20px); }
+            .speech-bubble { left: 10%; top: 12%; padding: 20px 35px; }
+            .speech-text { font-size: 24px; }
+        }
+
+        @media (max-width: 768px) {
+            .pony-container { bottom: -8%; right: -5%; transform: scale(0.38) translateY(260px) translateX(120px); }
+            .stage.is-active .pony-container { transform: scale(0.55) translateZ(50px) translateY(120px) translateX(0px); }
+            .speech-bubble { left: 5%; width: 90%; top: 10%; border-radius: 30px; padding: 18px 20px; }
+            .speech-text { font-size: 20px; white-space: normal; }
+            .guide-banner { font-size: 16px; padding: 10px 25px; top: 20px; }
+            .castle-container { transform: scale(0.45); left: 5%; top: 32%; }
+        }
+
+        @media (max-width: 480px) {
+            .pony-container { bottom: -12%; right: -25%; transform: scale(0.28) translateY(420px) translateX(220px); }
+            .stage.is-active .pony-container { transform: scale(0.42) translateZ(30px) translateY(240px) translateX(40px); }
+            .speech-bubble { top: 8%; padding: 15px 15px; }
+            .speech-text { font-size: 17px; }
+            .castle-container { display: none; } /* حذف جزییات ریز دکوراسیون در صفحه کوچک موبایل برای راندمان بالا */
+        }
+    </style>
+</head>
+<body>
+
+<div class="viewport-wrapper">
+    <div class="stage" id="magic-stage">
+
+        <div class="sky-layer"></div>
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+
+        <div class="castle-container">
+            <div class="tower t1"><div class="cone"></div></div>
+            <div class="tower t2"><div class="cone"></div></div>
+            <div class="tower t3"><div class="cone"></div></div>
+            <div class="castle-base"></div>
+        </div>
+
+        <div class="river"></div>
+        <div class="meadow-back"></div>
+
+        <div class="meadow-front">
+            <div class="flower-field">
+                <div class="field-flower fl1"><div class="f-center"></div><div class="f-petal f-p1"></div><div class="f-petal f-p2"></div><div class="f-petal f-p3"></div><div class="f-petal f-p4"></div><div class="f-petal f-p5"></div><div class="f-petal f-p6"></div></div>
+                <div class="field-flower fl2"><div class="f-center"></div><div class="f-petal f-p1"></div><div class="f-petal f-p2"></div><div class="f-petal f-p3"></div><div class="f-petal f-p4"></div><div class="f-petal f-p5"></div><div class="f-petal f-p6"></div></div>
+                <div class="field-flower fl3"><div class="f-center"></div><div class="f-petal f-p1"></div><div class="f-petal f-p2"></div><div class="f-petal f-p3"></div><div class="f-petal f-p4"></div><div class="f-petal f-p5"></div><div class="f-petal f-p6"></div></div>
+                <div class="field-flower fl4"><div class="f-center"></div><div class="f-petal f-p1"></div><div class="f-petal f-p2"></div><div class="f-petal f-p3"></div><div class="f-petal f-p4"></div><div class="f-petal f-p5"></div><div class="f-petal f-p6"></div></div>
+                <div class="field-flower fl5"><div class="f-center"></div><div class="f-petal f-p1"></div><div class="f-petal f-p2"></div><div class="f-petal f-p3"></div><div class="f-petal f-p4"></div><div class="f-petal f-p5"></div><div class="f-petal f-p6"></div></div>
+                <div class="field-flower fl6"><div class="f-center"></div><div class="f-petal f-p1"></div><div class="f-petal f-p2"></div><div class="f-petal f-p3"></div><div class="f-petal f-p4"></div><div class="f-petal f-p5"></div><div class="f-petal f-p6"></div></div>
+                <div class="field-flower fl7"><div class="f-center"></div><div class="f-petal f-p1"></div><div class="f-petal f-p2"></div><div class="f-petal f-p3"></div><div class="f-petal f-p4"></div><div class="f-petal f-p5"></div><div class="f-petal f-p6"></div></div>
+            </div>
+        </div>
+
+        <div class="pony-container">
+            <div class="pony-skeleton">
+                <div class="horn-glow"></div>
+                <div class="pony-tail"></div>
+                <div class="pony-leg l-back-right"><div class="leg-hoof"></div></div>
+                <div class="pony-leg l-front-right"><div class="leg-hoof"></div></div>
+                <div class="pony-body">
+                    <div class="cutie-mark">
+                        <div class="star-main"></div>
+                        <div class="star-white"></div>
+                    </div>
+                </div>
+                <div class="pony-leg l-back-left"><div class="leg-hoof"></div></div>
+                <div class="pony-neck"></div>
+                <div class="pony-mane-back"><div class="mane-stripe-pink"></div><div class="mane-stripe-purple"></div></div>
+                <div class="pony-head">
+                    <div class="pony-ear"><div class="ear-inner"></div></div>
+                    <div class="pony-horn"></div>
+                    <div class="pony-mane-front"><div class="mane-stripe-pink"></div><div class="mane-stripe-purple"></div></div>
+                    <div class="pony-muzzle"><div class="pony-smile"></div></div>
+                    <div class="pony-eye">
+                        <div class="eye-iris">
+                            <div class="eye-pupil"></div>
+                            <div class="eye-sparkle-1"></div>
+                            <div class="eye-sparkle-2"></div>
+                        </div>
+                    </div>
+                    <div class="eyelashes"><div class="lash lash1"></div><div class="lash lash2"></div></div>
+                </div>
+                <div class="pony-leg l-front-left"><div class="leg-hoof"></div></div>
+
+                <div class="gift-flower">
+                    <div class="g-stem"></div>
+                    <div class="g-center"></div>
+                    <div class="g-petal g-p1"></div>
+                    <div class="g-petal g-p2"></div>
+                    <div class="g-petal g-p3"></div>
+                    <div class="g-petal g-p4"></div>
+                    <div class="g-petal g-p5"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui-container">
+            <div class="guide-banner" id="banner">روی صفحه کلیک کن تا جادوی پونی رو ببینی! ✨</div>
+            <div class="speech-bubble" id="dialogue">
+                <div class="speech-text">این گل برای تو هستش <span class="name-highlight">ماهک کوچولو</span> 🌸</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const stage = document.getElementById('magic-stage');
+    const banner = document.getElementById('banner');
+
+    stage.addEventListener('click', function() {
+        // فعال‌سازی انیمیشن جلوآمدن سه‌بعدی و درخشش شاخ
+        stage.classList.add('is-active');
+
+        // محو کردن بنر راهنما با افکت نرم CSS
+        banner.style.opacity = '0';
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 500);
+    });
+</script>
+</body>
+</html>
